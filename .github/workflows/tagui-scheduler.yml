@@ -13,9 +13,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install TagUI (Corrected Script URL)
+      - name: Install TagUI (Corrected URL, lowercase)
         run: |
-          curl -O https://raw.githubusercontent.com/kelaberetiv/TagUI/main/tagui_install.sh
+          curl -O https://raw.githubusercontent.com/kelaberetiv/tagui/main/tagui_install.sh
           chmod +x tagui_install.sh
           ./tagui_install.sh
 
