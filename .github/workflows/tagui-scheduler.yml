@@ -2,7 +2,7 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *' # 7:30 AM IST daily
+    - cron: '0 2 * * *' # 7:30 AM IST
   workflow_dispatch:
 
 jobs:
@@ -13,14 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install TagUI (Corrected URL, lowercase)
+      - name: Install TagUI from Official S3
         run: |
-          curl -O https://raw.githubusercontent.com/kelaberetiv/tagui/main/tagui_install.sh
-          chmod +x tagui_install.sh
-          ./tagui_install.sh
+          sudo apt-get update
+          sudo apt-get install -y unzip curl
+          curl -L -o tagui.zip https://tagui.s3.amazonaws.com/tagui_linux.zip
+          unzip tagui.zip
+          chmod +x tagui/src/tagui
 
       - name: Run TagUI Script
-        run: ~/tagui/src/tagui srivani.tag
+        run: ./tagui/src/tagui srivani.tag
 
       - name: Upload CSV Result
         uses: actions/upload-artifact@v4
