@@ -2,7 +2,7 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *' # 7:30 AM IST
+    - cron: '0 2 * * *' # 7:30 AM IST daily
   workflow_dispatch:
 
 jobs:
@@ -13,14 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install TagUI (Official Script)
+      - name: Install TagUI (Corrected Script URL)
         run: |
-          curl -O https://raw.githubusercontent.com/kelaberetiv/TagUI/master/tagui_install.sh
+          curl -O https://raw.githubusercontent.com/kelaberetiv/TagUI/main/tagui_install.sh
           chmod +x tagui_install.sh
           ./tagui_install.sh
-
-      - name: List files (debug)
-        run: ls -al
 
       - name: Run TagUI Script
         run: ~/tagui/src/tagui srivani.tag
