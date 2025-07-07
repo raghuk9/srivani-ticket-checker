@@ -25,7 +25,7 @@ jobs:
 
       - name: Run TagUI script
         run: |
-          ./tagui/src/tagui srivani.tag
+          ./tagui/src/tagui srivani.tag -headless
 
       - name: Upload srivani.csv
         uses: actions/upload-artifact@v4
