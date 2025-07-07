@@ -2,29 +2,32 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *' # 7:30 AM IST
+    - cron: '0 2 * * *'  # Runs daily at 7:30 AM IST
   workflow_dispatch:
 
 jobs:
-  tagui_job:
+  run-tagui-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout your repo
         uses: actions/checkout@v3
 
-      - name: Install TagUI from Official S3
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip curl
-          curl -L -o tagui.zip https://tagui.s3.amazonaws.com/tagui_linux.zip
-          unzip tagui.zip
+          sudo apt-get install -y curl unzip libgtk-3-0 libnss3 libxss1 libasound2 xvfb
+
+      - name: Clone TagUI from GitHub
+        run: |
+          git clone https://github.com/kelaberetiv/tagui.git
           chmod +x tagui/src/tagui
 
-      - name: Run TagUI Script
-        run: ./tagui/src/tagui srivani.tag
+      - name: Run TagUI script
+        run: |
+          ./tagui/src/tagui srivani.tag
 
-      - name: Upload CSV Result
+      - name: Upload srivani.csv
         uses: actions/upload-artifact@v4
         with:
           name: srivani-results
