@@ -2,7 +2,7 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Runs daily at 7:30 AM IST
+    - cron: '0 2 * * *' # Runs daily at 7:30 AM IST
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl unzip libgtk-3-0 libnss3 libxss1 libasound2 xvfb
+          sudo apt-get install -y curl unzip libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb
 
       - name: Clone TagUI from GitHub
         run: |
