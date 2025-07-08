@@ -1,6 +1,3 @@
-chrome off
-timeout 10
-
 https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx
 
 echo "Navigated to Srivani Page"
