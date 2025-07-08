@@ -2,7 +2,11 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+  headless: true,
+  executablePath: '/usr/bin/chromium-browser',
+  });
+
   const page = await browser.newPage();
 
   await page.goto('https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx', { waitUntil: 'domcontentloaded' });
