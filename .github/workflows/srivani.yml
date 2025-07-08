@@ -16,7 +16,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl unzip chromium-browser xvfb
+          sudo apt-get install -y chromium-browser xvfb
+          npm uninstall puppeteer || true
+          npm install puppeteer-core
+
 
       - name: Install Node deps
         run: npm install
