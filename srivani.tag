@@ -1,3 +1,6 @@
+set config visual_automation to no
+set config timeout to 10
+
 https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx
 
 echo "Navigated to Srivani Page"
@@ -11,6 +14,7 @@ for i = 1 to 10
         echo `dateTime`
     else
         echo "Date element NOT FOUND"
+
     if exist("//span[@id='lblAvailableQuota']")
         echo "Quota element exists"
         read //span[@id='lblAvailableQuota'] to availableTickets
@@ -18,5 +22,7 @@ for i = 1 to 10
         write `dateTime`, `availableTickets` to srivani.csv
     else
         echo "Quota element NOT FOUND"
+
     wait 2 seconds
+
 snap page to final.png
