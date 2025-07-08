@@ -19,3 +19,4 @@ for i = 1 to 10
     else
         echo "Quota element NOT FOUND"
     wait 2 seconds
+snap page to final.png
