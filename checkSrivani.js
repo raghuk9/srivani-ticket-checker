@@ -3,9 +3,9 @@ const fs = require('fs');
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: '/usr/bin/chromium-browser',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    headless: 'new', // use Puppeteer's new headless mode (more stable)
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    timeout: 0       // disable launch timeout
   });
 
   const page = await browser.newPage();
