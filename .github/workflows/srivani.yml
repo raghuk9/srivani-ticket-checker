@@ -24,10 +24,11 @@ jobs:
       - name: Install Node deps
         run: npm install
 
-      - name: Run Puppeteer script (non-headless)
+      - name: Run Puppeteer script
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" \
-            npm start
+          npm init -y
+          npm install puppeteer-core
+          xvfb-run node checkSrivani.js
 
       - name: Upload CSV
         uses: actions/upload-artifact@v4
