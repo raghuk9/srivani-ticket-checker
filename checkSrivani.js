@@ -5,8 +5,8 @@ const fs = require('fs');
   const browser = await puppeteer.launch({
   headless: false,
   executablePath: '/usr/bin/chromium-browser',
-  args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
-  });
+  args: ['--no-sandbox', '--disable-gpu']
+});
 
 
   const page = await browser.newPage();
