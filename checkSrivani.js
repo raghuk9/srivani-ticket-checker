@@ -3,10 +3,11 @@ const fs = require('fs');
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: 'new',
-    executablePath: '/usr/bin/chromium-browser',
-    args: ['--no-sandbox']
+  headless: false,
+  executablePath: '/usr/bin/chromium-browser',
+  args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
   });
+
 
   const page = await browser.newPage();
   await page.goto('https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx', { waitUntil: 'domcontentloaded' });
