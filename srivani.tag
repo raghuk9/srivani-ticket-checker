@@ -1,5 +1,5 @@
-set config visual_automation to no
-set config timeout to 10
+chrome off
+timeout 10
 
 https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx
 
