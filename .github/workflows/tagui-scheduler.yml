@@ -2,7 +2,7 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *' # 7:30 AM IST
+    - cron: '0 2 * * *'  # Daily at 7:30 AM IST
   workflow_dispatch:
 
 jobs:
@@ -16,7 +16,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl unzip git libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb phantomjs
+          sudo apt-get install -y curl unzip git libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb
+
+      - name: Install PhantomJS manually
+        run: |
+          curl -L -o phantomjs.tar.bz2 https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs
+          chmod +x phantomjs
+          sudo mv phantomjs /usr/local/bin/phantomjs
+          phantomjs --version
 
       - name: Install CasperJS
         run: |
@@ -34,7 +41,7 @@ jobs:
         run: |
           xvfb-run ./tagui/src/tagui srivani.tag
 
-      - name: Show result CSV in logs
+      - name: Show result CSV
         run: |
           echo "--- srivani.csv ---"
           cat srivani.csv || echo "No output found"
