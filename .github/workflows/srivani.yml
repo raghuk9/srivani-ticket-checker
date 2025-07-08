@@ -39,6 +39,9 @@ jobs:
         run: |
           npm init -y
           npm install puppeteer-core
+          
+      - name: Install Node.js dependencies
+        run: npm install
 
       - name: Run Puppeteer Script
         run: |
