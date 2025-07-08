@@ -51,3 +51,10 @@ jobs:
         with:
           name: srivani-results
           path: srivani.csv
+          
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-page
+          path: final.png
+
