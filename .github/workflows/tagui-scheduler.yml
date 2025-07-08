@@ -2,7 +2,7 @@ name: Run Srivani TagUI Script
 
 on:
   schedule:
-    - cron: '0 2 * * *' # Runs daily at 7:30 AM IST
+    - cron: '0 2 * * *' # 7:30 AM IST
   workflow_dispatch:
 
 jobs:
@@ -16,16 +16,28 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl unzip libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb
+          sudo apt-get install -y curl unzip git libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb phantomjs
 
-      - name: Clone TagUI from GitHub
+      - name: Install CasperJS
+        run: |
+          git clone https://github.com/casperjs/casperjs.git
+          cd casperjs
+          sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
+          sudo ln -sf `pwd`/bin/casperjs /usr/bin/casperjs
+
+      - name: Clone TagUI
         run: |
           git clone https://github.com/kelaberetiv/tagui.git
           chmod +x tagui/src/tagui
 
-      - name: Run TagUI script
+      - name: Run TagUI script with xvfb
         run: |
-          ./tagui/src/tagui srivani.tag -headless
+          xvfb-run ./tagui/src/tagui srivani.tag
+
+      - name: Show result CSV in logs
+        run: |
+          echo "--- srivani.csv ---"
+          cat srivani.csv || echo "No output found"
 
       - name: Upload srivani.csv
         uses: actions/upload-artifact@v4
