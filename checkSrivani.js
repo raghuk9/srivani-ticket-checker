@@ -3,9 +3,11 @@ const fs = require('fs');
 
 (async () => {
   const browser = await puppeteer.launch({
-  headless: true,
+  headless: "new", // or true
   executablePath: '/usr/bin/chromium-browser',
+  args: ['--no-sandbox']
   });
+
 
   const page = await browser.newPage();
 
