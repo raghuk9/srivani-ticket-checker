@@ -39,7 +39,7 @@ jobs:
       - name: Run TagUI script with xvfb and OpenSSL fix
         run: |
           export OPENSSL_CONF=/dev/null
-          timeout 90s xvfb-run ./tagui/src/tagui srivani.tag
+          timeout 90s xvfb-run ./tagui/src/tagui srivani.tag -phantom
 
       - name: Show result CSV
         run: |
