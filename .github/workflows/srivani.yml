@@ -1,4 +1,4 @@
-name: Run Srivani Checker
+name: Run Srivani JS
 
 on:
   schedule:
@@ -17,9 +17,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-
+        
       - name: Install Puppeteer
-        run: npm install
+        run: |
+            export PUPPETEER_SKIP_DOWNLOAD=true
+            npm install
 
       - name: Run checker script
         run: npm start
