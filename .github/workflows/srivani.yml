@@ -3,7 +3,7 @@ name: Srivani Ticket Checker
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'  # Runs daily at 07:30 AM IST
+    - cron: '0 2 * * *'  # Runs at 7:30 AM IST
 
 jobs:
   check-srivani:
@@ -18,24 +18,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser xvfb
 
-      - name: Setup Puppeteer Project
+      - name: Set Up Minimal Node Project
         run: |
           npm init -y
           npm install puppeteer-core
 
-      - name: Run Srivani Checker (Puppeteer Non-Headless)
+      - name: Run Puppeteer Script
         run: |
-          echo "Starting script..."
           xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" node checkSrivani.js
 
-      - name: Upload CSV Output
+      - name: Upload CSV
         uses: actions/upload-artifact@v4
         with:
-          name: srivani-data
+          name: srivani-output
           path: srivani.csv
 
       - name: Upload Screenshot
         uses: actions/upload-artifact@v4
         with:
-          name: page-screenshot
+          name: srivani-screenshot
           path: final.png
