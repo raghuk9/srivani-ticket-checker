@@ -1,33 +1,39 @@
-name: Run Srivani JS
+name: Run Srivani Checker (non-headless)
 
 on:
-  schedule:
-    - cron: '0 2 * * *' # Daily at 7:30 AM IST
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *' # daily at 7:30 AM IST
 
 jobs:
-  check-srivani:
+  run-checker:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-        
-      - name: Install Puppeteer
+      - name: Install dependencies
         run: |
-            export PUPPETEER_SKIP_DOWNLOAD=true
-            npm install
+          sudo apt-get update
+          sudo apt-get install -y curl unzip chromium-browser xvfb
 
-      - name: Run checker script
-        run: npm start
+      - name: Install Node deps
+        run: npm install
+
+      - name: Run Puppeteer script (non-headless)
+        run: |
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" \
+            npm start
 
       - name: Upload CSV
         uses: actions/upload-artifact@v4
         with:
           name: srivani-results
           path: srivani.csv
+
+      - name: Upload Screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: final.png
