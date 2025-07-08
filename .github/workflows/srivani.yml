@@ -1,0 +1,31 @@
+name: Run Srivani Checker
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Daily at 7:30 AM IST
+  workflow_dispatch:
+
+jobs:
+  check-srivani:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Puppeteer
+        run: npm install
+
+      - name: Run checker script
+        run: npm start
+
+      - name: Upload CSV
+        uses: actions/upload-artifact@v4
+        with:
+          name: srivani-results
+          path: srivani.csv
