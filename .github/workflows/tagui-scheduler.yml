@@ -16,14 +16,18 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up TagUI
-      # You'll need to install TagUI and its dependencies on the runner.
-      # The easiest way is to use a pre-built action or a custom setup.
-      # Here's a common approach:
       run: |
         sudo apt-get update
-        sudo apt-get install -y openjdk-11-jre unzip chromium-browser
-        wget https://github.com/kelaberetiv/TagUI/releases/download/v5.11.0/TagUI_Linux.zip
-        unzip TagUI_Linux.zip -d /usr/local/share/
+        sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb
+    
+        # Download TagUI
+        wget https://github.com/tebelorg/TagUI/releases/download/v6.109/TagUI_Linux.zip
+    
+        # --- START OF MODIFICATION ---
+        # Use sudo for the unzip command to grant write permissions to /usr/local/share/
+        sudo unzip TagUI_Linux.zip -d /usr/local/share/
+        # --- END OF MODIFICATION ---
+    
         sudo ln -sf /usr/local/share/TagUI/src/tagui /usr/local/bin/tagui
         tagui # This command initializes TagUI and downloads dependencies
 
