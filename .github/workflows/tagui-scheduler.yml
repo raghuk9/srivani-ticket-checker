@@ -22,7 +22,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-11-jre unzip chromium-browser
-        wget https://github.com/tebelorg/TagUI/releases/download/v6.0.0/TagUI_Linux.zip
+        wget https://github.com/kelaberetiv/TagUI/releases/download/v5.11.0/TagUI_Linux.zip
         unzip TagUI_Linux.zip -d /usr/local/share/
         sudo ln -sf /usr/local/share/TagUI/src/tagui /usr/local/bin/tagui
         tagui # This command initializes TagUI and downloads dependencies
