@@ -30,7 +30,7 @@ jobs:
     - name: Run TagUI script
       run: |
         cd flows # Navigate to the directory containing your .tag file
-        tagui srivani_status.tag -headless # Run your TagUI script in headless mode
+        tagui srivani.tag -headless # Run your TagUI script in headless mode
       env:
         # You might need to set DISPLAY for some TagUI operations,
         # though -headless often makes it unnecessary.
@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: srivani-data
-        path: flows/srivani.csv # Adjust path if your script writes elsewhere
+        path: srivani.csv # Adjust path if your script writes elsewhere
 
     - name: Commit and push CSV (optional, if you want to track it in repo)
       # This step is optional. If you just want to download the CSV as an artifact,
@@ -50,7 +50,7 @@ jobs:
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add flows/srivani.csv # Assuming the CSV is in the flows directory
+        git add srivani.csv # Assuming the CSV is in the flows directory
         git commit -m "Update Srivani data" || echo "No changes to commit"
         git push
       env:
