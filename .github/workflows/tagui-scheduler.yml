@@ -1,60 +1,57 @@
-name: Run Srivani TagUI Script
+name: Srivani Token Status Checker
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 7:30 AM IST
-  workflow_dispatch:
+    # Runs every day at 00:00 UTC (adjust as needed using crontab.guru)
+    # Remember that GitHub Actions schedules are based on UTC.
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:
-  run-tagui-script:
+  run_tagui_script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout your repo
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl unzip git libgtk-3-0 libnss3 libxss1 libasound2t64 xvfb
+    - name: Set up TagUI
+      # You'll need to install TagUI and its dependencies on the runner.
+      # The easiest way is to use a pre-built action or a custom setup.
+      # Here's a common approach:
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-11-jre unzip chromium-browser
+        wget https://github.com/tebelorg/TagUI/releases/download/v6.0.0/TagUI_Linux.zip
+        unzip TagUI_Linux.zip -d /usr/local/share/
+        sudo ln -sf /usr/local/share/TagUI/src/tagui /usr/local/bin/tagui
+        tagui # This command initializes TagUI and downloads dependencies
 
-      - name: Install PhantomJS from Bitbucket
-        run: |
-          curl -L -o phantomjs.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
-          tar -xjf phantomjs.tar.bz2
-          sudo mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/
+    - name: Run TagUI script
+      run: |
+        cd flows # Navigate to the directory containing your .tag file
+        tagui srivani_status.tag -headless # Run your TagUI script in headless mode
+      env:
+        # You might need to set DISPLAY for some TagUI operations,
+        # though -headless often makes it unnecessary.
+        DISPLAY: ':99.0' # Required for GUI applications in some cases
 
-      - name: Install CasperJS
-        run: |
-          git clone https://github.com/casperjs/casperjs.git
-          cd casperjs
-          sudo ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
-          sudo ln -sf `pwd`/bin/casperjs /usr/bin/casperjs
+    - name: Upload CSV artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: srivani-data
+        path: flows/srivani.csv # Adjust path if your script writes elsewhere
 
-      - name: Clone TagUI
-        run: |
-          git clone https://github.com/kelaberetiv/tagui.git
-          chmod +x tagui/src/tagui
-
-      - name: Run TagUI script with xvfb and OpenSSL fix
-        run: |
-          export OPENSSL_CONF=/dev/null
-          timeout 90s xvfb-run ./tagui/src/tagui srivani.tag -phantom
-
-      - name: Show result CSV
-        run: |
-          echo "--- srivani.csv ---"
-          cat srivani.csv || echo "No output found"
-
-      - name: Upload srivani.csv
-        uses: actions/upload-artifact@v4
-        with:
-          name: srivani-results
-          path: srivani.csv
-          
-      - name: Upload screenshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: final-page
-          path: final.png
-
+    - name: Commit and push CSV (optional, if you want to track it in repo)
+      # This step is optional. If you just want to download the CSV as an artifact,
+      # you can skip this. If you want the CSV to be committed back to your repo,
+      # you'll need to configure Git.
+      if: success() # Only run if previous steps succeeded
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add flows/srivani.csv # Assuming the CSV is in the flows directory
+        git commit -m "Update Srivani data" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
