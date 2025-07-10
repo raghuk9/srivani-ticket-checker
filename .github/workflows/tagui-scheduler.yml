@@ -21,7 +21,8 @@ jobs:
         sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb
     
         # Download TagUI
-        wget https://github.com/tebelorg/TagUI/releases/download/v6.109/TagUI_Linux.zip
+        # wget https://github.com/tebelorg/TagUI/releases/download/v6.109/TagUI_Linux.zip
+        wget https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip
     
         # --- START OF MODIFICATION ---
         # Use sudo for the unzip command to grant write permissions to /usr/local/share/
