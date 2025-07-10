@@ -17,20 +17,42 @@ jobs:
 
     - name: Set up TagUI
       run: |
+        # Update and install necessary dependencies
         sudo apt-get update
-        sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb
+        sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl
     
-        # Download TagUI
-        # wget https://github.com/tebelorg/TagUI/releases/download/v6.109/TagUI_Linux.zip
-        wget https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip
+        # Download TagUI (ensure this URL is the latest and correct one)
+        # Re-verify the URL from https://github.com/tebelorg/TagUI/releases before running!
+        wget --no-check-certificate https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip -O /tmp/TagUI_Linux.zip
+  
+        # Create the target directory if it doesn't exist and set permissions
+        sudo mkdir -p /usr/local/share/TagUI
+        sudo chmod 755 /usr/local/share/TagUI
     
-        # --- START OF MODIFICATION ---
-        # Use sudo for the unzip command to grant write permissions to /usr/local/share/
-        sudo unzip TagUI_Linux.zip -d /usr/local/share/
-        # --- END OF MODIFICATION ---
+        # Unzip TagUI into the designated directory with sudo
+        sudo unzip /tmp/TagUI_Linux.zip -d /usr/local/share/
     
+        # Verify TagUI directory contents (for debugging)
+        echo "Listing contents of /usr/local/share/TagUI:"
+        ls -la /usr/local/share/TagUI/src/
+    
+        # Ensure the TagUI executable has execute permissions
+        sudo chmod +x /usr/local/share/TagUI/src/tagui
+    
+        # Create the symbolic link to make 'tagui' callable globally
         sudo ln -sf /usr/local/share/TagUI/src/tagui /usr/local/bin/tagui
-        tagui # This command initializes TagUI and downloads dependencies
+    
+        # Verify the symbolic link (for debugging)
+        echo "Verifying symbolic link:"
+        ls -la /usr/local/bin/tagui
+    
+        # Verify TagUI is now found in PATH
+        echo "Checking if tagui command is found:"
+        which tagui
+    
+        # This command initializes TagUI and downloads its internal dependencies.
+        # It must be run after the 'tagui' command is available in PATH.
+        tagui
 
     - name: Run TagUI script
       run: |
