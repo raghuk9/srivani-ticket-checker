@@ -48,7 +48,8 @@ jobs:
         # The TagUI executable is likely now at: /usr/local/share/tagui/tagui
         # or possibly /usr/local/share/tagui/src/tagui depending on exact v6.110.0 structure.
         # Let's assume the most common case: directly in the unzipped 'tagui' folder.
-        TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/tagui"
+        # TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/tagui"
+        TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/src/tagui"
 
         # Verify TagUI directory contents for debugging.
         # We need to look inside the *moved* directory
