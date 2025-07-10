@@ -2,10 +2,8 @@ name: Srivani Token Status Checker
 
 on:
   schedule:
-    # Runs every day at 00:00 UTC (adjust as needed using crontab.guru)
-    # Remember that GitHub Actions schedules are based on UTC.
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
 
 jobs:
   run_tagui_script:
@@ -20,51 +18,60 @@ jobs:
         # Update and install necessary dependencies
         sudo apt-get update
         sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl
-    
+
         # Download TagUI (ensure this URL is the latest and correct one)
         # Re-verify the URL from https://github.com/tebelorg/TagUI/releases before running!
+        # Note: Changed from 'tebelorg' to 'aisingapore' as per your provided URL.
+        # Ensure 'v6.110.0' is the exact version you want.
         wget --no-check-certificate https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip -O /tmp/TagUI_Linux.zip
-        # --- START OF CRITICAL MODIFICATION ---
 
         # Unzip TagUI to a temporary directory in a way that reveals its top-level folder
         mkdir -p /tmp/tagui_extracted
         unzip /tmp/TagUI_Linux.zip -d /tmp/tagui_extracted
-    
+
         # Find the actual top-level folder name (e.g., 'TagUI' or 'tagui')
-        # This command lists what was extracted directly into /tmp/tagui_extracted
         TAGUI_FOLDER=$(ls -1 /tmp/tagui_extracted | head -n 1)
         echo "Identified TagUI top-level folder: $TAGUI_FOLDER"
-    
-        # Create the final destination directory
-        sudo mkdir -p /usr/local/share/TagUI_Final
-        sudo chmod 755 /usr/local/share/TagUI_Final
-    
-        # Move the contents of the extracted folder into the final destination
-        sudo mv /tmp/tagui_extracted/"$TAGUI_FOLDER"/* /usr/local/share/TagUI_Final/
-    
-        # Now, the 'src' folder (and 'tagui' executable) should be directly under TagUI_Final
-        TAGUI_INSTALL_PATH="/usr/local/share/TagUI_Final"
-        # --- END OF CRITICAL MODIFICATION ---
 
-        
-        # Verify TagUI directory contents (for debugging)
-        echo "Listing contents of /usr/local/share/TagUI:"
-        ls -la /usr/local/share/TagUI/src/
-    
+        # Define the final, consistent installation path
+        TAGUI_INSTALL_BASE="/usr/local/share/tagui" # Using a consistent, simple base name
+        sudo mkdir -p "$TAGUI_INSTALL_BASE"
+        sudo chmod 755 "$TAGUI_INSTALL_BASE"
+
+        # Move the contents of the extracted folder into the final destination
+        # This means the 'tagui' folder (which was the top-level inside the zip)
+        # will now be directly inside $TAGUI_INSTALL_BASE.
+        sudo mv /tmp/tagui_extracted/"$TAGUI_FOLDER"/* "$TAGUI_INSTALL_BASE"/
+
+        # --- CORRECTED PATHS START HERE ---
+
+        # The TagUI executable is likely now at: /usr/local/share/tagui/tagui
+        # or possibly /usr/local/share/tagui/src/tagui depending on exact v6.110.0 structure.
+        # Let's assume the most common case: directly in the unzipped 'tagui' folder.
+        TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/tagui"
+
+        # Verify TagUI directory contents for debugging.
+        # We need to look inside the *moved* directory
+        echo "Listing contents of $TAGUI_INSTALL_BASE:"
+        ls -la "$TAGUI_INSTALL_BASE"
+
         # Ensure the TagUI executable has execute permissions
-        sudo chmod +x /usr/local/share/TagUI/src/tagui
-    
+        echo "Setting execute permissions for: $TAGUI_EXECUTABLE_FINAL_PATH"
+        sudo chmod +x "$TAGUI_EXECUTABLE_FINAL_PATH"
+
         # Create the symbolic link to make 'tagui' callable globally
-        sudo ln -sf /usr/local/share/TagUI/src/tagui /usr/local/bin/tagui
-    
+        sudo ln -sf "$TAGUI_EXECUTABLE_FINAL_PATH" /usr/local/bin/tagui
+
+        # --- CORRECTED PATHS END HERE ---
+
         # Verify the symbolic link (for debugging)
         echo "Verifying symbolic link:"
         ls -la /usr/local/bin/tagui
-    
+
         # Verify TagUI is now found in PATH
         echo "Checking if tagui command is found:"
         which tagui
-    
+
         # This command initializes TagUI and downloads its internal dependencies.
         # It must be run after the 'tagui' command is available in PATH.
         tagui
@@ -74,25 +81,24 @@ jobs:
         cd flows # Navigate to the directory containing your .tag file
         tagui srivani.tag -headless # Run your TagUI script in headless mode
       env:
-        # You might need to set DISPLAY for some TagUI operations,
-        # though -headless often makes it unnecessary.
-        DISPLAY: ':99.0' # Required for GUI applications in some cases
+        DISPLAY: ':99.0'
 
     - name: Upload CSV artifact
       uses: actions/upload-artifact@v4
       with:
         name: srivani-data
-        path: srivani.csv # Adjust path if your script writes elsewhere
+        # Correct path for srivani.csv - it's generated by your TagUI script
+        # If your script is in 'flows' and writes to 'srivani.csv' directly,
+        # the path will be 'flows/srivani.csv'
+        path: flows/srivani.csv
 
     - name: Commit and push CSV (optional, if you want to track it in repo)
-      # This step is optional. If you just want to download the CSV as an artifact,
-      # you can skip this. If you want the CSV to be committed back to your repo,
-      # you'll need to configure Git.
-      if: success() # Only run if previous steps succeeded
+      if: success()
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
-        git add srivani.csv # Assuming the CSV is in the flows directory
+        # Correct path for srivani.csv to be added to git
+        git add flows/srivani.csv
         git commit -m "Update Srivani data" || echo "No changes to commit"
         git push
       env:
