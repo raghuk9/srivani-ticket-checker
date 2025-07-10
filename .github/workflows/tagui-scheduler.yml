@@ -95,14 +95,14 @@ jobs:
         # The CSV will be in the repository root because the script runs from there
         path: srivani.csv # <--- Corrected path, no 'flows/' needed
 
-    - name: Commit and push CSV (optional, if you want to track it in repo)
-      if: success()
-      run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        # The CSV will be in the repository root
-        git add srivani.csv # <--- Corrected path, no 'flows/' needed
-        git commit -m "Update Srivani data" || echo "No changes to commit"
-        git push
+#    - name: Commit and push CSV (optional, if you want to track it in repo)
+#      if: success()
+#      run: |
+#        git config user.name "GitHub Actions"
+#        git config user.email "actions@github.com"
+#        # The CSV will be in the repository root
+#        git add srivani.csv # <--- Corrected path, no 'flows/' needed
+#        git commit -m "Update Srivani data" || echo "No changes to commit"
+#        git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
