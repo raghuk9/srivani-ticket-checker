@@ -75,7 +75,7 @@ jobs:
 
         # This command initializes TagUI and downloads its internal dependencies.
         # It must be run after the 'tagui' command is available in PATH.
-        tagui
+        tagui || true 
 
     - name: Run TagUI script
       run: |
