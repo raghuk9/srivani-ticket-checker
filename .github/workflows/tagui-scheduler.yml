@@ -24,14 +24,29 @@ jobs:
         # Download TagUI (ensure this URL is the latest and correct one)
         # Re-verify the URL from https://github.com/tebelorg/TagUI/releases before running!
         wget --no-check-certificate https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip -O /tmp/TagUI_Linux.zip
-  
-        # Create the target directory if it doesn't exist and set permissions
-        sudo mkdir -p /usr/local/share/TagUI
-        sudo chmod 755 /usr/local/share/TagUI
+        # --- START OF CRITICAL MODIFICATION ---
+
+        # Unzip TagUI to a temporary directory in a way that reveals its top-level folder
+        mkdir -p /tmp/tagui_extracted
+        unzip /tmp/TagUI_Linux.zip -d /tmp/tagui_extracted
     
-        # Unzip TagUI into the designated directory with sudo
-        sudo unzip /tmp/TagUI_Linux.zip -d /usr/local/share/
+        # Find the actual top-level folder name (e.g., 'TagUI' or 'tagui')
+        # This command lists what was extracted directly into /tmp/tagui_extracted
+        TAGUI_FOLDER=$(ls -1 /tmp/tagui_extracted | head -n 1)
+        echo "Identified TagUI top-level folder: $TAGUI_FOLDER"
     
+        # Create the final destination directory
+        sudo mkdir -p /usr/local/share/TagUI_Final
+        sudo chmod 755 /usr/local/share/TagUI_Final
+    
+        # Move the contents of the extracted folder into the final destination
+        sudo mv /tmp/tagui_extracted/"$TAGUI_FOLDER"/* /usr/local/share/TagUI_Final/
+    
+        # Now, the 'src' folder (and 'tagui' executable) should be directly under TagUI_Final
+        TAGUI_INSTALL_PATH="/usr/local/share/TagUI_Final"
+        # --- END OF CRITICAL MODIFICATION ---
+
+        
         # Verify TagUI directory contents (for debugging)
         echo "Listing contents of /usr/local/share/TagUI:"
         ls -la /usr/local/share/TagUI/src/
