@@ -17,7 +17,15 @@ jobs:
       run: |
         # Update and install necessary dependencies
         sudo apt-get update
-        sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl
+        # --- ADDED libssl-dev HERE ---
+        sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl libssl-dev
+        # --- END ADDITION ---
+
+        # --- ADDED OPENSSL ENVIRONMENT VARIABLES HERE ---
+        echo "Setting OPENSSL_CONF and LD_LIBRARY_PATH for OpenSSL providers"
+        export OPENSSL_CONF=/etc/ssl/openssl.cnf
+        export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
+        # --- END ADDITION ---
 
         # Download TagUI (ensure this URL is the latest and correct one)
         # Re-verify the URL from https://github.com/tebelorg/TagUI/releases before running!
@@ -45,16 +53,12 @@ jobs:
 
         # --- CORRECTED PATHS START HERE ---
 
-        # The TagUI executable is likely now at: /usr/local/share/tagui/tagui
-        # or possibly /usr/local/share/tagui/src/tagui depending on exact v6.110.0 structure.
-        # Let's assume the most common case: directly in the unzipped 'tagui' folder.
-        # TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/tagui"
+        # The TagUI executable is inside the 'src' directory.
         TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/src/tagui"
 
         # Verify TagUI directory contents for debugging.
-        # We need to look inside the *moved* directory
-        echo "Listing contents of $TAGUI_INSTALL_BASE:"
-        ls -la "$TAGUI_INSTALL_BASE"
+        echo "Listing contents of $TAGUI_INSTALL_BASE/src:" # Changed to src/ for more direct verification
+        ls -la "$TAGUI_INSTALL_BASE"/src/
 
         # Ensure the TagUI executable has execute permissions
         echo "Setting execute permissions for: $TAGUI_EXECUTABLE_FINAL_PATH"
