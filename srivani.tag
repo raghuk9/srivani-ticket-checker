@@ -3,7 +3,7 @@ https://webapps.tirumala.org/SrivaniTokenLiveTV/LiveStatus.aspx
 echo "Navigated to Srivani Page"
 wait 5 seconds
 
-for i = 1 to 10
+for i = 1 to 1
     echo "Iteration `i`..."
     if exist ("lblCurrentDate")
         echo "Date element exists"
