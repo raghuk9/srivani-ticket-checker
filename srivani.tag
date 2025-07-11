@@ -22,4 +22,4 @@ for i = 1 to 1
 
     wait 2 seconds
 
-# snap page to final.png
+// snap page to final.png
