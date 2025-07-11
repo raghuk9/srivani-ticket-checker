@@ -5,16 +5,16 @@ wait 5 seconds
 
 for i = 1 to 10
     echo "Iteration `i`..."
-    if exist ("//span[@id='lblCurrentDate']")
+    if exist ("lblCurrentDate")
         echo "Date element exists"
-        read //span[@id='lblCurrentDate'] to dateTime
+        read lblCurrentDate to dateTime
         echo `dateTime`
     else
         echo "Date element NOT FOUND"
 
-    if exist("//span[@id='lblAvailableQuota']")
+    if exist("lblAvailableQuota")
         echo "Quota element exists"
-        read //span[@id='lblAvailableQuota'] to availableTickets
+        read lblAvailableQuota to availableTickets
         echo `availableTickets`
         write `dateTime`, `availableTickets` to srivani.csv
     else
