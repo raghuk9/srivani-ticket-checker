@@ -19,13 +19,54 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl libssl-dev
 
-        # --- OpenSSL 3.x compatibility for Node.js (common fix for libproviders.so) ---
-        echo "Setting NODE_OPTIONS to use legacy OpenSSL provider for Node.js"
+        # --- Aggressive OpenSSL 3.x compatibility for libproviders.so ---
+        echo "Attempting aggressive OpenSSL provider configuration fix..."
+
+        # Try to find a working openssl.cnf, prefer a 3.x one if it exists
+        OPENSSL_CNF_PATH="/etc/ssl/openssl.cnf" # Default location
+
+        # Check if providers are causing issues and try to work around them
+        # Create a temporary openssl.cnf that uses the legacy provider by default
+        echo "Creating temporary openssl.cnf for legacy provider support..."
+        sudo bash -c 'cat <<EOF > /tmp/openssl_legacy.cnf
+[openssl_conf]
+ssl_conf = ssl_module_config
+
+[ssl_module_config]
+ssl_default_sect = ssl_sect
+
+[ssl_sect]
+system_default = ssl_default_sect
+
+[ssl_default_sect]
+# This line tells OpenSSL 3.x to use the legacy provider
+activate = 1
+providers = provider_sect
+
+[provider_sect]
+# Enable the base provider (essential) and the legacy provider
+default = default_sect
+legacy = legacy_sect
+
+[default_sect]
+activate = 1
+
+[legacy_sect]
+activate = 1
+EOF'
+
+        # Symlink the system's openssl.cnf to our custom one
+        # This is a bit risky but necessary if the default is causing issues
+        sudo mv /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.bak || true # Backup original
+        sudo ln -sf /tmp/openssl_legacy.cnf /etc/ssl/openssl.cnf
+        echo "Symlinked /etc/ssl/openssl.cnf to /tmp/openssl_legacy.cnf"
+
+        # Explicitly set environment variables (still useful even with modified cnf)
         export NODE_OPTIONS="--openssl-legacy-provider"
-        # Optional: You can still try these, but NODE_OPTIONS is often the main fix
         export OPENSSL_CONF=/etc/ssl/openssl.cnf
         export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
-        # --- End OpenSSL compatibility ---
+        echo "OpenSSL environment variables set."
+        # --- End Aggressive OpenSSL compatibility ---
 
         # Download TagUI
         wget --no-check-certificate https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip -O /tmp/TagUI_Linux.zip
@@ -34,7 +75,7 @@ jobs:
         mkdir -p /tmp/tagui_extracted
         unzip /tmp/TagUI_Linux.zip -d /tmp/tagui_extracted
 
-        # Find the actual top-level folder name (e.g., 'TagUI' or 'tagui')
+        # Find the actual top-level folder name
         TAGUI_FOLDER=$(ls -1 /tmp/tagui_extracted | head -n 1)
         echo "Identified TagUI top-level folder: $TAGUI_FOLDER"
 
