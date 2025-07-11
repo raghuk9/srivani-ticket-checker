@@ -29,31 +29,31 @@ jobs:
         # Create a temporary openssl.cnf that uses the legacy provider by default
         echo "Creating temporary openssl.cnf for legacy provider support..."
         sudo bash -c 'cat <<EOF > /tmp/openssl_legacy.cnf
-[openssl_conf]
-ssl_conf = ssl_module_config
+        [openssl_conf]
+        ssl_conf = ssl_module_config
 
-[ssl_module_config]
-ssl_default_sect = ssl_sect
+        [ssl_module_config]
+        ssl_default_sect = ssl_sect
 
-[ssl_sect]
-system_default = ssl_default_sect
+        [ssl_sect]
+        system_default = ssl_default_sect
 
-[ssl_default_sect]
-# This line tells OpenSSL 3.x to use the legacy provider
-activate = 1
-providers = provider_sect
+        [ssl_default_sect]
+        # This line tells OpenSSL 3.x to use the legacy provider
+        activate = 1
+        providers = provider_sect
 
-[provider_sect]
-# Enable the base provider (essential) and the legacy provider
-default = default_sect
-legacy = legacy_sect
+        [provider_sect]
+        # Enable the base provider (essential) and the legacy provider
+        default = default_sect
+        legacy = legacy_sect
 
-[default_sect]
-activate = 1
+        [default_sect]
+        activate = 1
 
-[legacy_sect]
-activate = 1
-EOF'
+        [legacy_sect]
+        activate = 1
+        EOF'
 
         # Symlink the system's openssl.cnf to our custom one
         # This is a bit risky but necessary if the default is causing issues
