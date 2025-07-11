@@ -18,23 +18,20 @@ jobs:
       run: |
         # Update and install necessary dependencies
         sudo apt-get update
-        # --- ADDED libssl-dev HERE ---
         sudo apt-get install -y openjdk-11-jre unzip chromium-browser xvfb curl libssl-dev
-        # --- END ADDITION ---
 
-        # --- ADDED OPENSSL ENVIRONMENT VARIABLES HERE ---
-        echo "Setting OPENSSL_CONF and LD_LIBRARY_PATH for OpenSSL providers"
+        # --- OpenSSL 3.x compatibility for Node.js (common fix for libproviders.so) ---
+        echo "Setting NODE_OPTIONS to use legacy OpenSSL provider for Node.js"
+        export NODE_OPTIONS="--openssl-legacy-provider"
+        # Optional: You can still try these, but NODE_OPTIONS is often the main fix
         export OPENSSL_CONF=/etc/ssl/openssl.cnf
         export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH"
-        # --- END ADDITION ---
+        # --- End OpenSSL compatibility ---
 
-        # Download TagUI (ensure this URL is the latest and correct one)
-        # Re-verify the URL from https://github.com/tebelorg/TagUI/releases before running!
-        # Note: Changed from 'tebelorg' to 'aisingapore' as per your provided URL.
-        # Ensure 'v6.110.0' is the exact version you want.
+        # Download TagUI
         wget --no-check-certificate https://github.com/aisingapore/TagUI/releases/download/v6.110.0/TagUI_Linux.zip -O /tmp/TagUI_Linux.zip
 
-        # Unzip TagUI to a temporary directory in a way that reveals its top-level folder
+        # Unzip TagUI to a temporary directory
         mkdir -p /tmp/tagui_extracted
         unzip /tmp/TagUI_Linux.zip -d /tmp/tagui_extracted
 
@@ -43,34 +40,28 @@ jobs:
         echo "Identified TagUI top-level folder: $TAGUI_FOLDER"
 
         # Define the final, consistent installation path
-        TAGUI_INSTALL_BASE="/usr/local/share/tagui" # Using a consistent, simple base name
+        TAGUI_INSTALL_BASE="/usr/local/share/tagui"
         sudo mkdir -p "$TAGUI_INSTALL_BASE"
         sudo chmod 755 "$TAGUI_INSTALL_BASE"
 
         # Move the contents of the extracted folder into the final destination
-        # This means the 'tagui' folder (which was the top-level inside the zip)
-        # will now be directly inside $TAGUI_INSTALL_BASE.
         sudo mv /tmp/tagui_extracted/"$TAGUI_FOLDER"/* "$TAGUI_INSTALL_BASE"/
 
-        # --- CORRECTED PATHS START HERE ---
-
-        # The TagUI executable is inside the 'src' directory.
+        # The 'tagui' executable is inside the 'src' directory.
         TAGUI_EXECUTABLE_FINAL_PATH="$TAGUI_INSTALL_BASE/src/tagui"
 
-        # Verify TagUI directory contents for debugging.
-        echo "Listing contents of $TAGUI_INSTALL_BASE/src:" # Changed to src/ for more direct verification
+        # Verify TagUI directory contents
+        echo "Listing contents of $TAGUI_INSTALL_BASE/src:"
         ls -la "$TAGUI_INSTALL_BASE"/src/
 
         # Ensure the TagUI executable has execute permissions
         echo "Setting execute permissions for: $TAGUI_EXECUTABLE_FINAL_PATH"
         sudo chmod +x "$TAGUI_EXECUTABLE_FINAL_PATH"
 
-        # Create the symbolic link to make 'tagui' callable globally
+        # Create the symbolic link
         sudo ln -sf "$TAGUI_EXECUTABLE_FINAL_PATH" /usr/local/bin/tagui
 
-        # --- CORRECTED PATHS END HERE ---
-
-        # Verify the symbolic link (for debugging)
+        # Verify the symbolic link
         echo "Verifying symbolic link:"
         ls -la /usr/local/bin/tagui
 
@@ -78,9 +69,8 @@ jobs:
         echo "Checking if tagui command is found:"
         which tagui
 
-        # This command initializes TagUI and downloads its internal dependencies.
-        # It must be run after the 'tagui' command is available in PATH.
-        tagui || true 
+        # Initialize TagUI
+        tagui || true
 
     - name: Run TagUI script
       run: |
