@@ -110,7 +110,7 @@ jobs:
         which tagui
 
         # Initialize TagUI
-        tagui || true
+        tagui || true 
 
     - name: Run TagUI script
       run: |
@@ -119,7 +119,7 @@ jobs:
 
         # Run your TagUI script in headless mode
         # Since srivani.tag is in the root, you can call it directly
-        tagui srivani.tag -headless
+        tagui srivani.tag -headless --chrome-args="--ignore-certificate-errors --no-sandbox --disable-dev-shm-usage"
       
       env:
         DISPLAY: ':99.0'
