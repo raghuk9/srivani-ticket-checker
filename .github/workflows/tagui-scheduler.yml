@@ -7,8 +7,7 @@ on:
 
 jobs:
   run_tagui_script:
-    # runs-on: ubuntu-latest
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest # <--- THIS MUST BE ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -88,7 +87,7 @@ jobs:
       with:
         name: srivani-data
         # The CSV will be in the repository root because the script runs from there
-        path: srivani.csv # <--- Corrected path, no 'flows/' needed
+        path: srivani.csv
 
 #    - name: Commit and push CSV (optional, if you want to track it in repo)
 #      if: success()
@@ -96,8 +95,8 @@ jobs:
 #        git config user.name "GitHub Actions"
 #        git config user.email "actions@github.com"
 #        # The CSV will be in the repository root
-#        git add srivani.csv # <--- Corrected path, no 'flows/' needed
+#        git add srivani.csv
 #        git commit -m "Update Srivani data" || echo "No changes to commit"
 #        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
